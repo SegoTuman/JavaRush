@@ -26,10 +26,12 @@ public class Mouse extends Herbivore {
 
 
     @Override
-    public void multiply(Animal partner) {
+    public boolean multiply(Animal partner) {
         if (partner instanceof Mouse){
             Location location = IslandField.getInstance().getLocation(partner.getX(), partner.getY());
             IslandField.getInstance().addAnimal(new Mouse(), location.getX(), location.getY());
+            return true;
         }
+        return false;
     }
 }

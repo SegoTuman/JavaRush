@@ -26,10 +26,12 @@ public class Wolf extends Predator {
 
 
     @Override
-    public void multiply(Animal partner) {
+    public boolean multiply(Animal partner) {
         if (partner instanceof Wolf) {
             Location location = IslandField.getInstance().getLocation(partner.getX(), partner.getY());
             IslandField.getInstance().addAnimal(new Wolf(), location.getX(), location.getY());
+            return true;
         }
+        return false;
     }
 }

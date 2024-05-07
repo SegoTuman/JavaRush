@@ -3,8 +3,7 @@ package simulation.services;
 import simulation.IslandSimulation;
 
 
-public class PlantGrowthService implements Runnable {
-    @Override
+public class PlantGrowthService {
     public void run() {
         int countPlants = 20;
         if (IslandSimulation.getInstance().getTimeNow() >= 2) {

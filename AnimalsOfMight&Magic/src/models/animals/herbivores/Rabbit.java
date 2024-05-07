@@ -25,10 +25,12 @@ public class Rabbit extends Herbivore {
     }
 
     @Override
-    public void multiply(Animal partner) {
+    public boolean multiply(Animal partner) {
         if (partner instanceof Rabbit){
             Location location = IslandField.getInstance().getLocation(partner.getX(), partner.getY());
             IslandField.getInstance().addAnimal(new Rabbit(), location.getX(), location.getY());
+            return true;
         }
+        return false;
     }
 }

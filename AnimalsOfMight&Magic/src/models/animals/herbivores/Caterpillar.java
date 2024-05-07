@@ -27,10 +27,12 @@ public class Caterpillar extends Herbivore {
 
 
     @Override
-    public void multiply(Animal partner) {
+    public boolean multiply(Animal partner) {
         if (partner instanceof Caterpillar){
             Location location = IslandField.getInstance().getLocation(partner.getX(), partner.getY());
             IslandField.getInstance().addAnimal(new Caterpillar(), location.getX(), location.getY());
+            return true;
         }
+        return false;
     }
 }

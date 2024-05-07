@@ -10,22 +10,18 @@ import simulation.services.StatisticsService;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 
-public class AnimalEatService implements Runnable {
-    private final CountDownLatch latch;
+public class AnimalEatService {
     private int animalsEaten;
+    private int animalsDiedByHungry;
 
-
-    public AnimalEatService(CountDownLatch latch) {
-        this.latch = latch;
-    }
-
-    @Override
     public void run() {
+        animalsDiedByHungry = 0;
         animalsEaten = 0;
-        List<Animal> animals = IslandField.getInstance().getAllAnimals();
+        Set<Animal> animals = IslandField.getInstance().getAllAnimals();
         List<Entity> lifeFormsEaten = new ArrayList<>();
         int countAnimalsStart = animals.size();
 
@@ -34,41 +30,58 @@ public class AnimalEatService implements Runnable {
 
             while (iterator.hasNext()) {
                 Animal currentAnimal = iterator.next();
+                currentAnimal.setFull(false);
+                Double alreadyEaten = 0.0;
                 if (currentAnimal.getKgToFullEating() > 0) {
                     Location location = IslandField.getInstance().getLocation(currentAnimal.getX(), currentAnimal.getY());
                     List<Entity> locationEntities = location.getLifeForms();
-                   //locationEntities.forEach(System.out::println);
                     if (!locationEntities.isEmpty()) {
                         for (Entity entity : locationEntities) {
-                           //System.out.println(currentAnimal.getClass().getSimpleName() + "  " + entity.getClass().getSimpleName());
-                                if (currentAnimal.getChanceToEat(entity.getClass().getSimpleName()) > 0 && !(lifeFormsEaten.contains(entity))) {
-                                    boolean isEaten = currentAnimal.eat(entity);
+                            if (!(lifeFormsEaten.contains(entity))) {
+                                boolean isEaten = currentAnimal.eat(entity);
 
-                                    if (isEaten) {
-                                        if (entity instanceof Animal animalEaten) {
-                                            lifeFormsEaten.add(animalEaten);
-                                            animalsEaten++;
-                                        }
+
+                                if (isEaten) {
+                                    lifeFormsEaten.add(entity);
+                                    alreadyEaten += entity.getWeight();
+                                    if (currentAnimal.getHp() + alreadyEaten >= currentAnimal.getKgToFullEating()) {
+                                        currentAnimal.setHp(currentAnimal.getKgToFullEating());
+                                        currentAnimal.setFull(true);
                                     }
+                                    if (entity instanceof Animal animalEaten) {
+                                        animalsEaten++;
+                                    }
+                                }
+                                if (currentAnimal.isFull() == true) {
                                     break;
                                 }
+                            }
+                        }
+                        if(!currentAnimal.isFull()) {
+                            currentAnimal.setHp(currentAnimal.getHp() + alreadyEaten);
+                        }
+                        double hpToDecrease = currentAnimal.getKgToFullEating() * 0.15;
+                        if (currentAnimal.getHp() - hpToDecrease > 0) {
+                            currentAnimal.setHp(currentAnimal.getHp() - hpToDecrease);
+                        } else {
+                            IslandField.getInstance().removeAnimal(currentAnimal);
+                            animalsDiedByHungry++;
                         }
                     }
                 }
                 iterator.remove();
             }
-        } else if (countAnimalsStart == 0) {
-            System.out.printf("ВСЕ ЖИВОТНЫЕ УМЕРЛИ НА %d ДЕНЬ!", StatisticsService.getCurrentDay());
-            IslandSimulation.getInstance().getExecutorService().shutdown();
-            System.exit(0);
         } else {
             System.out.printf("ПОБЕДИЛИ ГУСЕНИЦЫ! В ЖИВЫХ ОСТАЛИСЬ ТОЛЬКО ОНИ НА %d ДЕНЬ!", StatisticsService.getCurrentDay());
-            IslandSimulation.getInstance().getExecutorService().shutdown();
             System.exit(0);
         }
-        latch.countDown();
     }
+
     public int getAnimalsEaten() {
         return animalsEaten;
+    }
+
+    public int getAnimalsDiedByHungry() {
+        return animalsDiedByHungry;
     }
 }

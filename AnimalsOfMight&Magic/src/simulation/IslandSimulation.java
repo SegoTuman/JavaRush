@@ -12,6 +12,7 @@ import simulation.services.animalLifecycleService.AnimalLifecycleService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadLocalRandom;
@@ -50,15 +51,21 @@ public class IslandSimulation {
     }
 
     private void runIslandModel() {
-        executorService = Executors.newScheduledThreadPool(3);
-
+        Scanner scanner = new Scanner(System.in);
         AnimalLifecycleService animalLifecycleService = new AnimalLifecycleService();
         PlantGrowthService plantGrowthService = new PlantGrowthService();
-        StatisticsService statisticsService = new StatisticsService(animalLifecycleService.getAnimalEatTask(), animalLifecycleService.getAnimalHpDecreaseTask(), animalLifecycleService.getObjectMultiplyTask());
-
-        executorService.scheduleAtFixedRate(animalLifecycleService, 1, 8, TimeUnit.SECONDS);
-        executorService.scheduleAtFixedRate(plantGrowthService, 40, 30, TimeUnit.SECONDS);
-        executorService.scheduleAtFixedRate(statisticsService, 0, 8, TimeUnit.SECONDS);
+        StatisticsService statisticsService = new StatisticsService(animalLifecycleService.getAnimalEatTask(), animalLifecycleService.getObjectMultiplyTask());
+        statisticsService.run();
+        System.out.println("Нажмите ENTER для продолжения. Введите 0 чтобы остановить программу.");
+        String stop = scanner.nextLine();
+        int step = 0;
+        while (!stop.equals("0")){
+            animalLifecycleService.run(step);
+            plantGrowthService.run();
+            statisticsService.run();
+            step++;
+            stop = scanner.nextLine();
+        }
     }
 
     private List<Herbivore> createHerbivores(int countHerbivores) {

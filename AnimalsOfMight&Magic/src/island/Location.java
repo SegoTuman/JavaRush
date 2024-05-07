@@ -5,22 +5,24 @@ import abstracts.Animal;
 import models.plant.Plant;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class Location {
     public Integer x;
     public Integer y;
-    private final List<Animal> animals;
-    private final List<Plant> plants;
+    private final Set<Animal> animals;
+    private final Set<Plant> plants;
 
 
     public Location(int x, int y) {
         this.x = x;
         this.y = y;
 
-        animals = new ArrayList<>();
-        plants = new ArrayList<>();
+        animals = new HashSet<>();
+        plants = new HashSet<>();
     }
 
     public void addAnimal(Animal animal) {
@@ -44,11 +46,11 @@ public class Location {
         plants.remove(plant);
     }
 
-    public List<Plant> getPlants() {
+    public Set<Plant> getPlants() {
         return plants;
     }
 
-    public List<Animal> getAnimals() {
+    public Set<Animal> getAnimals() {
         return animals;
     }
 

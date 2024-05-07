@@ -8,32 +8,25 @@ import simulation.services.animalLifecycleService.service.AnimalMultiplyService;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-public class AnimalLifecycleService implements Runnable {
+public class AnimalLifecycleService{
     private final AnimalEatService animalEatService;
     private final AnimalMultiplyService animalMultiplyService;
-    private final AnimalHpDecreaseService animalHpDecreaseService;
-    private final CountDownLatch latch;
+//    private final AnimalHpDecreaseService animalHpDecreaseService;
+    private final AnimalMoveService animalMoveService;
 
     public AnimalLifecycleService() {
-        latch = new CountDownLatch(3);
-        animalEatService = new AnimalEatService(latch);
-        animalMultiplyService = new AnimalMultiplyService(latch);
-        animalHpDecreaseService = new AnimalHpDecreaseService(latch);
+        animalEatService = new AnimalEatService();
+        animalMultiplyService = new AnimalMultiplyService();
+       // animalHpDecreaseService = new AnimalHpDecreaseService();
+        animalMoveService = new AnimalMoveService();
     }
 
-    @Override
-    public void run() {
-        ExecutorService executorService = Executors.newFixedThreadPool(4);
+    public void run(int step) {
+        animalEatService.run();
+        animalMultiplyService.run(step);
+       // animalHpDecreaseService.run();
 
-        executorService.submit(animalEatService);
-        executorService.submit(animalMultiplyService);
-        executorService.submit(animalHpDecreaseService);
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        executorService.submit(new AnimalMoveService());
+
     }
 
     public AnimalMultiplyService getObjectMultiplyTask() {
@@ -44,7 +37,7 @@ public class AnimalLifecycleService implements Runnable {
         return animalEatService;
     }
 
-    public AnimalHpDecreaseService getAnimalHpDecreaseTask() {
-        return animalHpDecreaseService;
-    }
+   // public AnimalHpDecreaseService getAnimalHpDecreaseTask() {
+  //      return animalHpDecreaseService;
+  //  }
 }

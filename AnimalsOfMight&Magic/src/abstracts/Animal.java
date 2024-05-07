@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public abstract class Animal extends Entity {
     private double hp;
-
+    private boolean full;
     public Animal(double weight, int speed, int maxPopulation, Double kgToFullEating) {
         super(weight, maxPopulation, speed,  kgToFullEating);
         hp = kgToFullEating;
@@ -38,18 +38,17 @@ public abstract class Animal extends Entity {
 
         animalEatFood = ThreadLocalRandom.current().nextDouble() < chanceToEat;
         if (animalEatFood) {
-            setHp(Math.min((getHp() + entity.getWeight()), getKgToFullEating()));
             Location location = IslandField.getInstance().getLocation(this.getX(), this.getY());
             if (entity instanceof Animal animal) {
                 if (location.getAnimals().contains(animal)) {
-                    IslandField.getInstance().removeAnimal(animal, location.getX(), location.getY());
+                    IslandField.getInstance().removeAnimal(animal);
                 } else {
                     return false;
                 }
             } else {
                 Plant plant = (Plant) entity;
                 if (location.getPlants().size() > 0) {
-                    IslandField.getInstance().removePlant(plant, location.getX(), location.getY());
+                    IslandField.getInstance().removePlant(plant);
                 } else {
                     return false;
                 }
@@ -58,7 +57,7 @@ public abstract class Animal extends Entity {
         return animalEatFood;
     }
 
-    public abstract void multiply(Animal partner);
+    public abstract boolean multiply(Animal partner);
 
 
 
@@ -105,20 +104,17 @@ public abstract class Animal extends Entity {
             newX = getX();
             newY = getY();
             switch (direction) {
-                case 0 -> // Вверх
+                case 0 ->
                         newX -= randomCells;
-                case 1 -> // Вниз
+                case 1 ->
                         newX += randomCells;
-                case 2 -> // Влево
+                case 2 ->
                         newY -= randomCells;
-                case 3 -> // Вправо
+                case 3 ->
                         newY += randomCells;
             }
         }
-        IslandField.getInstance().removeAnimal(this, getX(), getY());
-
-        setX(newX);
-        setY(newY);
+        IslandField.getInstance().removeAnimal(this);
         IslandField.getInstance().addAnimal(this, newX, newY);
     }
 
@@ -138,4 +134,11 @@ public abstract class Animal extends Entity {
         return kgToFullEating;
     }
 
+    public boolean isFull() {
+        return full;
+    }
+
+    public void setFull(boolean full) {
+        this.full = full;
+    }
 }

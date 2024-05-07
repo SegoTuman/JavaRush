@@ -25,10 +25,12 @@ public class WildBoar extends Herbivore {
     }
 
     @Override
-    public void multiply(Animal partner) {
+    public boolean multiply(Animal partner) {
         if (partner instanceof WildBoar){
             Location location = IslandField.getInstance().getLocation(partner.getX(), partner.getY());
             IslandField.getInstance().addAnimal(new WildBoar(), location.getX(), location.getY());
+            return true;
         }
+        return false;
     }
 }

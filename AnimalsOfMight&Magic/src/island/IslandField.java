@@ -6,7 +6,9 @@ import models.plant.Plant;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class IslandField {
     private Location[][] locations;
@@ -50,8 +52,8 @@ public class IslandField {
     }
 
 
-    public void removeAnimal(Animal animal, int x, int y) {
-        Location location = getLocation(x, y);
+    public void removeAnimal(Animal animal) {
+        Location location = getLocation(animal.getX(), animal.getY());
         location.removeAnimal(animal);
     }
 
@@ -60,13 +62,13 @@ public class IslandField {
         location.addPlant(plant);
     }
 
-    public void removePlant(Plant plant, int x, int y) {
-        Location location = getLocation(x, y);
+    public void removePlant(Plant plant) {
+        Location location = getLocation(plant.getX(), plant.getY());
         location.removePlant(plant);
     }
 
-    public synchronized List<Animal> getAllAnimals() {
-        List<Animal> allAnimals = new ArrayList<>();
+    public synchronized Set<Animal> getAllAnimals() {
+        Set<Animal> allAnimals = new HashSet<>();
         for (Location[] x : locations) {
             for (Location location : x) {
                 allAnimals.addAll(location.getAnimals());
@@ -75,8 +77,8 @@ public class IslandField {
         return allAnimals;
     }
 
-    public List<Plant> getAllPlants() {
-        List<Plant> allPlants = new ArrayList<>();
+    public Set<Plant> getAllPlants() {
+        Set<Plant> allPlants = new HashSet<>();
         for (Location[] x : locations) {
             for (Location location : x) {
                 allPlants.addAll(location.getPlants());

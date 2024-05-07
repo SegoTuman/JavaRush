@@ -7,7 +7,7 @@ import simulation.services.animalLifecycleService.service.AnimalHpDecreaseServic
 import simulation.services.animalLifecycleService.service.AnimalMultiplyService;
 
 
-public class StatisticsService implements Runnable {
+public class StatisticsService  {
     private boolean isTimeOver;
     private int babies;
     private int animalsEaten;
@@ -17,47 +17,28 @@ public class StatisticsService implements Runnable {
     private static int currentDay = 0;
     private final AnimalMultiplyService animalMultiplyService;
     private final AnimalEatService animalEatService;
-    private final AnimalHpDecreaseService animalHpDecreaseService;
+   // private final AnimalHpDecreaseService animalHpDecreaseService;
 
-    public StatisticsService(AnimalEatService animalEatService, AnimalHpDecreaseService animalHpDecreaseService, AnimalMultiplyService animalMultiplyService) {
+    public StatisticsService(AnimalEatService animalEatService, AnimalMultiplyService animalMultiplyService) {
         this.animalEatService = animalEatService;
-        this.animalHpDecreaseService = animalHpDecreaseService;
+     //   this.animalHpDecreaseService = animalHpDecreaseService;
         this.animalMultiplyService = animalMultiplyService;
     }
 
-    @Override
     public void run() {
-        long timeNow = IslandSimulation.getInstance().getTimeNow();
-        isTimeOver = checkTime(timeNow);
-
         babies = animalMultiplyService.getBabies();
-        countAnimalsEnd = IslandField.getInstance().getAllAnimals().size();
         animalsEaten = animalEatService.getAnimalsEaten();
-        animalsDiedByHungry = animalHpDecreaseService.getAnimalsDiedByHungry();
+        animalsDiedByHungry = animalEatService.getAnimalsDiedByHungry();
         countPlants = IslandField.getInstance().getAllPlants().size();
+        countAnimalsEnd = IslandField.getInstance().getAllAnimals().size();
         printStats();
-
-        if (isTimeOver) {
-            IslandSimulation.getInstance().getExecutorService().shutdown();
-            System.exit(0);
-        }
     }
-
-
-    private boolean checkTime(long timeNow) {
-        return timeNow / 60 >= 5;
-    }
-
 
     private void printStats() {
-        if (isTimeOver) {
-            System.out.println("ПОБЕДА!!! ВЫ ПРОДЕРЖАЛИСЬ 5 МИНУТ!");
-            System.out.println("----------------------------------");
-        } else {
-            System.out.printf("--- ДЕНЬ %d ---", currentDay);
-            currentDay++;
-            System.out.println();
-        }
+        System.out.printf("--- ДЕНЬ %d ---", currentDay);
+        currentDay++;
+        System.out.println();
+
         System.out.println();
         System.out.println("СТАТИСТИКА ПО ОСТРОВУ");
         System.out.println();
