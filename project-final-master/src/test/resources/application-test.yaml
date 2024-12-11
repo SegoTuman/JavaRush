@@ -1,0 +1,19 @@
+app:
+  spring.cache.type: none
+  spring:
+    init:
+      mode: always
+    datasource:
+      url: jdbc:h2:mem:testdb;MODE=PostgreSQL
+      username: sa
+      password:
+      driverClassName: org.h2.Driver
+    jpa:
+      liquibase:
+        changeLog: "classpath:db/changelog.sql"
+      database-platform: org.hibernate.dialect.H2Dialect
+      properties:
+        hibernate:
+          globally_quoted_identifiers: true
+          dialect: org.hibernate.dialect.H2Dialect
+          globally_quoted_identifiers_skip_column_definitions: true
