@@ -19,7 +19,7 @@ public class ConsoleService {
         System.out.println("Адрес зашифрованного файла");
         cryptoPaths.setPathFrom(scanner.nextLine());
 
-        System.out.println("Адрес файла с примером");
+        System.out.println("Адрес файла с словарем примерных слов");
         cryptoPaths.setResource(scanner.nextLine());
 
         System.out.println("Адрес файла с результатом");
